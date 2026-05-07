@@ -18,7 +18,7 @@ void Piece::affiche() const {
 // =============================================================================
 
 Tour::Tour(couleur_t color, const std::string& symbol, int id, const Square& pos)
-    : Piece(color, symbol, id, pos) {}
+    : Piece(color, symbol, id, pos), moved_(false) {}
 
 bool Tour::is_legal_move_geometry(const Square& origin, const Square& dest) const {
     // Rook moves along a rank (same row) or a file (same column).
@@ -75,7 +75,7 @@ bool Dame::is_legal_move_geometry(const Square& origin, const Square& dest) cons
 // =============================================================================
 
 Roi::Roi(couleur_t color, const std::string& symbol, int id, const Square& pos)
-    : Piece(color, symbol, id, pos) {}
+    : Piece(color, symbol, id, pos), moved_(false) {}
 
 bool Roi::is_legal_move_geometry(const Square& origin, const Square& dest) const {
     int dr = std::abs(dest.get_row() - origin.get_row());
@@ -89,7 +89,7 @@ bool Roi::is_legal_move_geometry(const Square& origin, const Square& dest) const
 // =============================================================================
 
 Pion::Pion(couleur_t color, const std::string& symbol, int id, const Square& pos)
-    : Piece(color, symbol, id, pos), moved_(false) {}
+    : Piece(color, symbol, id, pos), moved_(false), en_passant_vulnerable_(false) {}
 
 bool Pion::is_legal_move_geometry(const Square& origin, const Square& dest) const {
     // Direction: white (+1) or black (-1) in the row axis.

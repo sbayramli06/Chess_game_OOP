@@ -56,6 +56,9 @@ public:
     /// Update internal position (called by Echiquier after a successful move).
     void set_pos(const Square& sq) { pos_ = sq; }
 
+    /// Change the display symbol (used for pawn promotion).
+    void set_symbol(const std::string& s) { symbol_ = s; }
+
     /// Print the UTF-8 symbol to stdout.
     void affiche() const;
 
@@ -81,6 +84,13 @@ public:
     Tour(couleur_t color, const std::string& symbol, int id, const Square& pos);
     bool is_legal_move_geometry(const Square& origin, const Square& dest) const override;
     bool is_sliding() const override { return true; }
+
+    /// @brief Track whether this rook has moved (needed for castling).
+    bool has_moved() const { return moved_; }
+    void set_moved()       { moved_ = true; }
+
+private:
+    bool moved_ = false;
 };
 
 /// Knight – L-shaped jump, can leap over pieces.
@@ -111,6 +121,13 @@ class Roi : public Piece {
 public:
     Roi(couleur_t color, const std::string& symbol, int id, const Square& pos);
     bool is_legal_move_geometry(const Square& origin, const Square& dest) const override;
+
+    /// @brief Track whether this king has moved (needed for castling).
+    bool has_moved() const { return moved_; }
+    void set_moved()       { moved_ = true; }
+
+private:
+    bool moved_ = false;
 };
 
 /**
@@ -136,8 +153,13 @@ public:
      */
     bool is_capture_move(const Square& origin, const Square& dest) const;
 
+    /// @brief En passant: true during the one turn when this pawn can be captured en passant.
+    bool is_en_passant_vulnerable() const { return en_passant_vulnerable_; }
+    void set_en_passant_vulnerable(bool v) { en_passant_vulnerable_ = v; }
+
 private:
-    bool moved_; ///< false until the pawn makes its first move
+    bool moved_;                      ///< false until the pawn makes its first move
+    bool en_passant_vulnerable_;      ///< true for exactly one opponent turn after a 2-square advance
 };
 
 #endif // PIECE_H

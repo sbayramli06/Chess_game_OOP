@@ -69,6 +69,14 @@ void Jeu::deplace(const string& orig, const string& dest) {
 // =============================================================================
 
 bool Jeu::coup() {
+    // 1. Clear en passant vulnerabilities from the previous turn
+    board_.clear_en_passant(current_player_);
+
+    // 2. Announce check
+    if (board_.is_in_check(current_player_)) {
+        cout << "Check!\n";
+    }
+
     string cmd;
 
     // Keep prompting until we get a valid move or a terminal command
@@ -107,27 +115,39 @@ bool Jeu::coup() {
             return true;
         }
 
-        // ---- Normal move ----------------------------------------------------
+        // ---- Castling commands -----------------------------------------------
+        
+        static const std::regex kingside_pattern("(O|o|0)-(O|o|0)");
+        static const std::regex queenside_pattern("(O|o|0)-(O|o|0)-(O|o|0)");
 
-        if (!is_valid_move_input(cmd)) {
+        bool moved = false;
+
+        if (std::regex_match(cmd, kingside_pattern)) {
+            moved = board_.do_kingside_castling(current_player_);
+        } else if (std::regex_match(cmd, queenside_pattern)) {
+            moved = board_.do_queenside_castling(current_player_);
+        } 
+        // ---- Normal move ----------------------------------------------------
+        else if (is_valid_move_input(cmd)) {
+            string orig = cmd.substr(0, 2);
+            string dest = cmd.substr(2, 2);
+
+            Square from(orig);
+            Square to(dest);
+
+            moved = board_.deplace(from, to, current_player_);
+        } else {
             cout << "Error: \"" << cmd
-                 << "\" is not valid (expected e.g. e2e4, /quit, /resign, /draw).\n";
+                 << "\" is not valid (expected e.g. e2e4, O-O, /quit, /resign, /draw).\n";
             continue;   // prompt again
         }
 
-        string orig = cmd.substr(0, 2);
-        string dest = cmd.substr(2, 2);
-
-        Square from(orig);
-        Square to(dest);
-
-        bool moved = board_.deplace(from, to, current_player_);
         if (moved) {
             current_player_ = (current_player_ == Blanc) ? Noir : Blanc;
             affiche();
             return false;   // game continues
         }
-        // If move was invalid, board_.deplace() already printed the error;
+        // If move was invalid, board_.deplace() / do_*_castling() already printed the error;
         // loop back and ask again.
     }
 }
