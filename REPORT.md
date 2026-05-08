@@ -1,12 +1,3 @@
-# Chess Game OOP — Project Report
-
-**Course:** Object-Oriented Programming — Mini-project: Chessboard  
-**Instructor:** Ali Ayadi  
-**Language:** C++17  
-**Repository:** https://github.com/sbayramli06/Chess_game_OOP  
-**Branch:** `main` (merged from `my-feature`)
-
----
 
 ## 1. Project Overview
 
