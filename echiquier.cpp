@@ -470,6 +470,77 @@ bool Echiquier::deplace(const Square& origin, const Square& dest,
 }
 
 // =============================================================================
+// Endgame detection (Phase 3)
+// =============================================================================
+
+bool Echiquier::has_any_legal_move(couleur_t color) {
+    for (auto* p : pieces_[color]) {
+        Square from = p->get_pos();
+        Pion* pawn = dynamic_cast<Pion*>(p);
+
+        for (int r = 0; r < NBCOL; ++r) {
+            for (int c = 0; c < NBCOL; ++c) {
+                Square to(r, c);
+                if (to == from) continue;
+
+                Piece* target = board_[r][c];
+                // Cannot land on own piece
+                if (target && target->get_color() == color) continue;
+
+                if (pawn) {
+                    bool is_capture = pawn->is_capture_move(from, to);
+                    // Forward move: destination must be empty
+                    if (!is_capture && target) continue;
+                    // Diagonal capture: destination must have enemy or be en passant
+                    if (is_capture && !target) {
+                        int ep_row = (color == Blanc) ? 4 : 3;
+                        if (from.get_row() != ep_row) continue;
+                        Piece* adj = board_[from.get_row()][c];
+                        Pion* adj_pawn = dynamic_cast<Pion*>(adj);
+                        if (!adj_pawn || adj_pawn->get_color() == color
+                            || !adj_pawn->is_en_passant_vulnerable()) continue;
+                    }
+                    if (!pawn->is_legal_move_geometry(from, to)) continue;
+                    // 2-square advance: mid must be clear
+                    if (!is_capture) {
+                        int direction = (color == Blanc) ? 1 : -1;
+                        if (to.get_row() - from.get_row() == 2 * direction) {
+                            Square mid(from.get_row() + direction, from.get_col());
+                            if (!est_case_vide(mid)) continue;
+                        }
+                    }
+                } else {
+                    if (!p->is_legal_move_geometry(from, to)) continue;
+                    if (p->is_sliding() && !path_is_clear(from, to)) continue;
+                }
+
+                // Check if the move leaves the king safe
+                if (move_is_safe(from, to, color)) return true;
+            }
+        }
+    }
+
+    // Also check castling as a possible legal move
+    int row = (color == Blanc) ? 0 : 7;
+    Roi* king = dynamic_cast<Roi*>(board_[row][4]);
+    if (king && !king->has_moved()) {
+        // Kingside
+        Tour* rk = dynamic_cast<Tour*>(board_[row][7]);
+        if (rk && !rk->has_moved() && !board_[row][5] && !board_[row][6]) {
+            // Quick check: just verify king not in check and path safe
+            if (!is_in_check(color)) return true; // castling would be legal (simplified)
+        }
+        // Queenside
+        Tour* rq = dynamic_cast<Tour*>(board_[row][0]);
+        if (rq && !rq->has_moved() && !board_[row][1] && !board_[row][2] && !board_[row][3]) {
+            if (!is_in_check(color)) return true;
+        }
+    }
+
+    return false;
+}
+
+// =============================================================================
 // Canonical position
 // =============================================================================
 

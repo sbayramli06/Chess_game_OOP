@@ -105,6 +105,16 @@ public:
     /// Clear en passant vulnerability for all pawns of @p color.
     void clear_en_passant(couleur_t color);
 
+    // ---- Endgame detection (Phase 3) ----------------------------------------
+
+    /**
+     * @brief Returns true if @p color has at least one legal move available.
+     *
+     * Used to detect checkmate (in check + no legal moves) and stalemate
+     * (not in check + no legal moves).
+     */
+    bool has_any_legal_move(couleur_t color);
+
     // ---- Canonical position for testing ------------------------------------
 
     /// Returns the board state as a comma-separated string (section 3.1).

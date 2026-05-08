@@ -145,6 +145,27 @@ bool Jeu::coup() {
         if (moved) {
             current_player_ = (current_player_ == Blanc) ? Noir : Blanc;
             affiche();
+
+            // --- Phase 3: Checkmate and Stalemate detection ---
+            bool in_check   = board_.is_in_check(current_player_);
+            bool has_moves  = board_.has_any_legal_move(current_player_);
+
+            if (!has_moves) {
+                if (in_check) {
+                    // Checkmate: the player whose turn it now is has no legal moves and is in check
+                    result_ = (current_player_ == Blanc) ? "0-1" : "1-0";
+                    cout << "Checkmate! "
+                         << (current_player_ == Blanc ? "Black" : "White")
+                         << " wins.\n";
+                } else {
+                    // Stalemate
+                    result_ = "1/2-1/2";
+                    cout << "Stalemate! The game is a draw.\n";
+                }
+                print_final_line();
+                return true;
+            }
+
             return false;   // game continues
         }
         // If move was invalid, board_.deplace() / do_*_castling() already printed the error;
