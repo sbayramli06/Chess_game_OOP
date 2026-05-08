@@ -145,5 +145,7 @@ Jeu
 
 ## Authors
 
-- **Aniya Baghirova** — Base implementation (Levels 1–3)  
-- **Teammate (sbayramli06)** — Endgame detection: checkmate, stalemate, memory management (Level 4, branch `my-feature`)
+- **Bayramli Shehana**
+- **Farida Orucova**
+- **Huseynova Fakhriyya**
+- **Baghirova Aniya**
