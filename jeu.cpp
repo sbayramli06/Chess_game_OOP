@@ -85,6 +85,7 @@ bool Jeu::coup() {
         if (!(cin >> cmd)) {
             // EOF reached (e.g. piped input exhausted)
             result_ = "?-?";
+            cout << "\n";
             print_final_line();
             return true;
         }
@@ -93,6 +94,7 @@ bool Jeu::coup() {
 
         if (cmd == "/quit") {
             result_ = "?-?";
+            cout << "\n";
             print_final_line();
             return true;
         }
