@@ -4,3 +4,10 @@
 # Executables
 *.exe
 chess
+chess_test
+
+# Local test runner (not part of submission)
+run_tests.ps1
+
+# macOS metadata
+._*

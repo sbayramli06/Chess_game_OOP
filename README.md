@@ -17,30 +17,63 @@ Built as part of the *Mini-project: Object Programming (Chessboard)* assignment.
 
 ---
 
-## Build
+## Requirements
 
-**Requirements:** g++ with C++17 support, `make`
-
-```bash
-make        # compile
-make clean  # remove build artifacts
-```
+| Tool | Version | Notes |
+|---|---|---|
+| `g++` | ≥ 7 (C++17) | GCC or MinGW |
+| `make` | any | GNU Make |
 
 ---
 
-## Run
+## Build & Run
 
-### Interactive mode
+### 🐧 Linux / macOS
+
 ```bash
+# 1. Clone the repository
+git clone https://github.com/sbayramli06/Chess_game_OOP.git
+cd Chess_game_OOP
+
+# 2. Compile
+make
+
+# 3. Play interactively
+./chess
+
+# 4. Clean build artefacts
+make clean
+```
+
+### 🪟 Windows
+
+**Option A — MSYS2 (recommended)**
+
+1. Install [MSYS2](https://www.msys2.org/) and open the **MSYS2 MinGW 64-bit** shell.
+2. Install the compiler once:
+   ```bash
+   pacman -S mingw-w64-x86_64-gcc make
+   ```
+3. Navigate to the project folder and build:
+   ```bash
+   cd /c/Users/<YourName>/Desktop/Chess_game_OOP
+   make
+   ./chess
+   ```
+
+**Option B — Git Bash (if you already have MinGW/g++ on your PATH)**
+
+```bash
+# Open Git Bash in the project folder, then:
+make
 ./chess
 ```
 
-### From a game file
-```bash
-cat game.txt | ./chess
+**Option C — PowerShell / Command Prompt (manual compile, no make)**
 
-# Strip comment lines first
-grep -v "^#" game.txt | ./chess
+```powershell
+g++ -std=c++17 -Wall -o chess main.cpp square.cpp piece.cpp echiquier.cpp jeu.cpp
+.\chess.exe
 ```
 
 ---
@@ -72,7 +105,18 @@ Promotion! Choose piece (Q, R, B, N):
 ```
 Type one of: `Q` (Queen), `R` (Rook), `B` (Bishop), `N` (Knight).
 
+### Replay a recorded game
+
+```bash
+# Linux/macOS
+grep -v "^#" game.txt | ./chess
+
+# Windows (Git Bash / MSYS2)
+grep -v "^#" game.txt | ./chess
+```
+
 ---
+
 
 ## Board Display
 

@@ -217,6 +217,18 @@ bool Echiquier::do_kingside_castling(couleur_t color) {
         cout << "Error: squares between king and rook are not empty.\n"; return false;
     }
 
+    // King must not be in check, and must not pass through or land on an attacked square
+    if (is_in_check(color)) {
+        cout << "Error: cannot castle while in check.\n"; return false;
+    }
+    // Check that king's transit squares (f1/f8 = col5, g1/g8 = col6) are safe
+    if (!move_is_safe(Square(row, 4), Square(row, 5), color)) {
+        cout << "Error: castling would put king through an attacked square.\n"; return false;
+    }
+    if (!move_is_safe(Square(row, 4), Square(row, 6), color)) {
+        cout << "Error: castling would put king on an attacked square.\n"; return false;
+    }
+
     // Execute castling
     board_[row][6] = king;  board_[row][4] = nullptr;
     king->set_pos(Square(row, 6)); king->set_moved();
@@ -243,6 +255,18 @@ bool Echiquier::do_queenside_castling(couleur_t color) {
     }
     if (board_[row][1] || board_[row][2] || board_[row][3]) {
         cout << "Error: squares between king and rook are not empty.\n"; return false;
+    }
+
+    // King must not be in check, and must not pass through or land on an attacked square
+    if (is_in_check(color)) {
+        cout << "Error: cannot castle while in check.\n"; return false;
+    }
+    // King passes through d1/d8 (col3) and lands on c1/c8 (col2)
+    if (!move_is_safe(Square(row, 4), Square(row, 3), color)) {
+        cout << "Error: castling would put king through an attacked square.\n"; return false;
+    }
+    if (!move_is_safe(Square(row, 4), Square(row, 2), color)) {
+        cout << "Error: castling would put king on an attacked square.\n"; return false;
     }
 
     board_[row][2] = king;  board_[row][4] = nullptr;
